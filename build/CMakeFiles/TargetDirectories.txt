@@ -1,0 +1,3 @@
+C:/Users/harsh/OneDrive/Desktop/Agentic_Query_c++_Engine/build/CMakeFiles/NaturalSQL.dir
+C:/Users/harsh/OneDrive/Desktop/Agentic_Query_c++_Engine/build/CMakeFiles/edit_cache.dir
+C:/Users/harsh/OneDrive/Desktop/Agentic_Query_c++_Engine/build/CMakeFiles/rebuild_cache.dir

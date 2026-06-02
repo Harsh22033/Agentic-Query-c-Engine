@@ -1,0 +1,32 @@
+[
+{
+  "directory": "C:/Users/harsh/OneDrive/Desktop/Agentic_Query_c++_Engine/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/harsh/OneDrive/Desktop/Agentic_Query_c++_Engine/NaturalSQL/src -g -std=c++17 -Wall -Wextra -Wpedantic -Werror -O3 -o CMakeFiles\\NaturalSQL.dir\\src\\main.cpp.obj -c C:\\Users\\harsh\\OneDrive\\Desktop\\Agentic_Query_c++_Engine\\NaturalSQL\\src\\main.cpp",
+  "file": "C:/Users/harsh/OneDrive/Desktop/Agentic_Query_c++_Engine/NaturalSQL/src/main.cpp",
+  "output": "C:/Users/harsh/OneDrive/Desktop/Agentic_Query_c++_Engine/build/CMakeFiles/NaturalSQL.dir/src/main.cpp.obj"
+},
+{
+  "directory": "C:/Users/harsh/OneDrive/Desktop/Agentic_Query_c++_Engine/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/harsh/OneDrive/Desktop/Agentic_Query_c++_Engine/NaturalSQL/src -g -std=c++17 -Wall -Wextra -Wpedantic -Werror -O3 -o CMakeFiles\\NaturalSQL.dir\\src\\parser\\Lexer.cpp.obj -c C:\\Users\\harsh\\OneDrive\\Desktop\\Agentic_Query_c++_Engine\\NaturalSQL\\src\\parser\\Lexer.cpp",
+  "file": "C:/Users/harsh/OneDrive/Desktop/Agentic_Query_c++_Engine/NaturalSQL/src/parser/Lexer.cpp",
+  "output": "C:/Users/harsh/OneDrive/Desktop/Agentic_Query_c++_Engine/build/CMakeFiles/NaturalSQL.dir/src/parser/Lexer.cpp.obj"
+},
+{
+  "directory": "C:/Users/harsh/OneDrive/Desktop/Agentic_Query_c++_Engine/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/harsh/OneDrive/Desktop/Agentic_Query_c++_Engine/NaturalSQL/src -g -std=c++17 -Wall -Wextra -Wpedantic -Werror -O3 -o CMakeFiles\\NaturalSQL.dir\\src\\parser\\Parser.cpp.obj -c C:\\Users\\harsh\\OneDrive\\Desktop\\Agentic_Query_c++_Engine\\NaturalSQL\\src\\parser\\Parser.cpp",
+  "file": "C:/Users/harsh/OneDrive/Desktop/Agentic_Query_c++_Engine/NaturalSQL/src/parser/Parser.cpp",
+  "output": "C:/Users/harsh/OneDrive/Desktop/Agentic_Query_c++_Engine/build/CMakeFiles/NaturalSQL.dir/src/parser/Parser.cpp.obj"
+},
+{
+  "directory": "C:/Users/harsh/OneDrive/Desktop/Agentic_Query_c++_Engine/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/harsh/OneDrive/Desktop/Agentic_Query_c++_Engine/NaturalSQL/src -g -std=c++17 -Wall -Wextra -Wpedantic -Werror -O3 -o CMakeFiles\\NaturalSQL.dir\\src\\storage\\CSVLoader.cpp.obj -c C:\\Users\\harsh\\OneDrive\\Desktop\\Agentic_Query_c++_Engine\\NaturalSQL\\src\\storage\\CSVLoader.cpp",
+  "file": "C:/Users/harsh/OneDrive/Desktop/Agentic_Query_c++_Engine/NaturalSQL/src/storage/CSVLoader.cpp",
+  "output": "C:/Users/harsh/OneDrive/Desktop/Agentic_Query_c++_Engine/build/CMakeFiles/NaturalSQL.dir/src/storage/CSVLoader.cpp.obj"
+},
+{
+  "directory": "C:/Users/harsh/OneDrive/Desktop/Agentic_Query_c++_Engine/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/harsh/OneDrive/Desktop/Agentic_Query_c++_Engine/NaturalSQL/src -g -std=c++17 -Wall -Wextra -Wpedantic -Werror -O3 -o CMakeFiles\\NaturalSQL.dir\\src\\engine\\Executor.cpp.obj -c C:\\Users\\harsh\\OneDrive\\Desktop\\Agentic_Query_c++_Engine\\NaturalSQL\\src\\engine\\Executor.cpp",
+  "file": "C:/Users/harsh/OneDrive/Desktop/Agentic_Query_c++_Engine/NaturalSQL/src/engine/Executor.cpp",
+  "output": "C:/Users/harsh/OneDrive/Desktop/Agentic_Query_c++_Engine/build/CMakeFiles/NaturalSQL.dir/src/engine/Executor.cpp.obj"
+}
+]
