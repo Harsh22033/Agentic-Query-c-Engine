@@ -3,12 +3,14 @@
 
 using namespace std;
 
-void Executor::execute(const unique_ptr<SelectStatement>& ast, const Table& table) {
-    if (ast->table_name != table.name) {
-        throw runtime_error("Table name mismatch: " + ast->table_name);
+void Executor::execute(const unique_ptr<SelectStatement>& ast, const Database& db) {
+    if (db.find(ast->table_name) == db.end()) {
+        throw runtime_error("Table not found: " + ast->table_name);
     }
 
-    // Resolve which columns we actually need to print
+    const Table& table = db.at(ast->table_name);
+
+    // 1. Resolve which columns we actually need to print
     vector<string> target_columns;
     if (ast->columns.size() == 1 && ast->columns[0] == "*") {
         target_columns = table.column_names;
@@ -16,7 +18,58 @@ void Executor::execute(const unique_ptr<SelectStatement>& ast, const Table& tabl
         target_columns = ast->columns;
     }
 
-    // Print Header
+    // 2. Filter Rows (WHERE clause)
+    vector<size_t> row_ids;
+    for (size_t row_idx = 0; row_idx < table.row_count; ++row_idx) {
+        bool passes_where = true;
+
+        if (ast->where_clause) {
+            passes_where = evaluate_where(ast->where_clause.get(), table, row_idx);
+        }
+
+        if (passes_where) {
+            row_ids.push_back(row_idx);
+        }
+    }
+
+    // COUNT(*) fast path
+
+    if (ast->is_count_star)
+    {
+        cout << left
+            << setw(15)
+            << "COUNT(*)"
+            << "\n";
+
+        cout << "---------------\n";
+
+        cout << left
+            << setw(15)
+            << row_ids.size()
+            << "\n";
+
+        return;
+    }
+
+    // 3. Sort Rows (ORDER BY clause)
+    if (!ast->order_by_column.empty()) {
+        const auto& sort_col = table.columns.at(ast->order_by_column);
+        
+        sort(row_ids.begin(), row_ids.end(), [&](size_t a, size_t b) {
+            if (ast->order_desc) {
+                return sort_col[a] > sort_col[b]; 
+            } else {
+                return sort_col[a] < sort_col[b];
+            }
+        });
+    }
+
+    // 4. Limit Rows (LIMIT clause) - Must happen AFTER sorting
+    if (ast->limit > 0 && ast->limit < row_ids.size()) {
+        row_ids.resize(ast->limit);
+    }
+
+    // 5. Print Header
     for (const auto& col : target_columns) {
         cout << left << setw(15) << col;
     }
@@ -24,35 +77,22 @@ void Executor::execute(const unique_ptr<SelectStatement>& ast, const Table& tabl
     for (size_t i = 0; i < target_columns.size(); ++i) cout << "---------------";
     cout << "\n";
 
-    // Execution Loop: Scan rows and apply WHERE & LIMIT
-    int limit = ast->limit;
-    int rows_yielded = 0;
-
-    for (size_t row_idx = 0; row_idx < table.row_count; ++row_idx) {
-        // Stop if we hit the limit
-        if (limit != -1 && rows_yielded >= limit) {
-            break;
-        }
-
-        // Check WHERE clause
-        bool passes_where = true;
-        if (ast->where_clause) {
-            passes_where = evaluate_where(ast->where_clause.get(), table, row_idx);
-        }
-
-        // If it passes, print the selected columns
-        if (passes_where) {
-            for (const auto& col : target_columns) {
-                const auto& value = table.columns.at(col)[row_idx];
-                
-                // std::visit is used to extract the value from our std::variant
-                visit([](auto&& arg) { cout << left << setw(15) << arg; }, value);
+    // 6. Print the final Result Set
+    for (size_t row_idx : row_ids) {
+        for (const auto& col_name : target_columns) {
+            const auto& val = table.columns.at(col_name)[row_idx];
+            
+            if (holds_alternative<int>(val)) {
+                cout << left << setw(15) << get<int>(val);
+            } else if (holds_alternative<string>(val)) {
+                cout << left << setw(15) << get<string>(val);
             }
-            cout << "\n";
-            rows_yielded++;
         }
+        cout << "\n";
     }
-    cout << "(" << rows_yielded << " rows returned)\n";
+
+    // 7. Print the total row count
+    cout << "(" << row_ids.size() << " rows returned)\n";
 }
 
 SqlValue Executor::evaluate_expr(const Expr* expr, const Table& table, size_t row_idx) {

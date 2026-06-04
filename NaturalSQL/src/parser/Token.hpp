@@ -13,7 +13,9 @@ enum class TokenType {
     LPAREN,
     RPAREN,
     END_OF_FILE,
-    UNKNOWN
+    UNKNOWN,
+    STAR,
+    DOT
 };
 
 struct Token {

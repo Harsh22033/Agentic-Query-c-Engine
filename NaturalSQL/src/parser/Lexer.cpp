@@ -39,17 +39,24 @@ vector<Token> Lexer::tokenize() {
             tokens.push_back({TokenType::COMMA, source_.substr(start, 1)});
             continue;
         }
-        if (c == '*') {
-            tokens.push_back({TokenType::OPERATOR,
-            source_.substr(start, 1)});
-            continue;
-        }
         if (c == '(') {
             tokens.push_back({TokenType::LPAREN, source_.substr(start, 1)});
             continue;
         }
         if (c == ')') {
             tokens.push_back({TokenType::RPAREN, source_.substr(start, 1)});
+            continue;
+        }
+
+        if (c == '*') {
+            tokens.push_back({TokenType::STAR, source_.substr(start, 1)});
+            continue;
+        }
+        if (c == '.') {
+            tokens.push_back(
+            {TokenType::DOT,
+            source_.substr(start, 1)}
+            );
             continue;
         }
 
@@ -102,7 +109,8 @@ Token Lexer::handle_identifier_or_keyword() {
 
     if (upper == "SELECT" || upper == "FROM" || upper == "WHERE" || 
         upper == "ORDER" || upper == "BY" || upper == "LIMIT" ||
-        upper == "ASC" || upper == "DESC") {
+        upper == "ASC" || upper == "DESC" || upper == "COUNT" ||
+        upper == "JOIN" || upper == "ON"){
         return {TokenType::KEYWORD, lexeme};
     }
 

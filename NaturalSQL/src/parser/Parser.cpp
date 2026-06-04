@@ -40,22 +40,136 @@ unique_ptr<SelectStatement> Parser::parse() {
     // 1. SELECT
     consume(TokenType::KEYWORD, "Expected 'SELECT'");
     
-    // Parse columns
-    do {
-        if (match(TokenType::OPERATOR) && previous().lexeme == "*") {
-            stmt->columns.push_back("*");
-        } else {
-            consume(TokenType::IDENTIFIER, "Expected column name");
-            stmt->columns.push_back(string(previous().lexeme));
-        }
-    } while (match(TokenType::COMMA));
+    // Parse columns or COUNT(*)
+
+    if (check(TokenType::KEYWORD) &&
+        string(peek().lexeme) == "COUNT")
+    {
+        advance(); // consume COUNT
+
+        consume(
+            TokenType::LPAREN,
+            "Expected '(' after COUNT"
+        );
+
+        consume(
+            TokenType::STAR,
+            "Expected '*' inside COUNT(*)"
+        );
+
+        consume(
+            TokenType::RPAREN,
+            "Expected ')' after *"
+        );
+
+        stmt->is_count_star = true;
+    }
+    else
+    {
+        do {
+            if (match(TokenType::STAR)) {
+                stmt->columns.push_back("*");
+            }
+            else {
+                consume(
+                    TokenType::IDENTIFIER,
+                    "Expected column name"
+                );
+
+                stmt->columns.push_back(
+                    string(previous().lexeme)
+                );
+            }
+
+        } while (match(TokenType::COMMA));
+    }
 
     // 2. FROM
     consume(TokenType::KEYWORD, "Expected 'FROM'");
     consume(TokenType::IDENTIFIER, "Expected table name");
     stmt->table_name = string(previous().lexeme);
 
-    // 3. WHERE
+
+    // JOIN clause
+
+    if (!is_at_end() &&
+        check(TokenType::KEYWORD) &&
+        string(peek().lexeme) == "JOIN")
+    {
+        advance(); // consume JOIN
+
+        auto join =
+            make_unique<JoinClause>();
+
+        consume(
+            TokenType::IDENTIFIER,
+            "Expected table after JOIN"
+        );
+
+        join->table_name =
+            string(previous().lexeme);
+
+        consume(
+            TokenType::KEYWORD,
+            "Expected ON after JOIN table"
+        );
+
+        // left side
+        consume(
+            TokenType::IDENTIFIER,
+            "Expected left table"
+        );
+
+        join->left_col =
+            string(previous().lexeme);
+
+        consume(
+            TokenType::DOT,
+            "Expected '.'"
+        );
+
+        consume(
+            TokenType::IDENTIFIER,
+            "Expected left column"
+        );
+
+        join->left_col += ".";
+        join->left_col +=
+            string(previous().lexeme);
+
+        consume(
+            TokenType::OPERATOR,
+            "Expected '='"
+        );
+
+        // right side
+        consume(
+            TokenType::IDENTIFIER,
+            "Expected right table"
+        );
+
+        join->right_col =
+            string(previous().lexeme);
+
+        consume(
+            TokenType::DOT,
+            "Expected '.'"
+        );
+
+        consume(
+            TokenType::IDENTIFIER,
+            "Expected right column"
+        );
+
+        join->right_col += ".";
+        join->right_col +=
+            string(previous().lexeme);
+
+        stmt->join_clause =
+            move(join);
+    }
+
+    //  WHERE
     if (match(TokenType::KEYWORD)) {
         // Simple case-insensitive check (assuming lexer handled it, but being safe)
         string kw = string(previous().lexeme);
@@ -64,7 +178,7 @@ unique_ptr<SelectStatement> Parser::parse() {
         }
     }
 
-    // 4. Order By
+    //  Order By
 
     if (!is_at_end() &&
         check(TokenType::KEYWORD) &&

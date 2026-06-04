@@ -1,5 +1,7 @@
 #pragma once
 #include <bits/stdc++.h>
+#include <variant>
+#include <string_view>
 
 using namespace std;
 
@@ -33,6 +35,13 @@ struct BinaryExpr : public Expr {
         : left(move(l)), op(move(o)), right(move(r)) {}
 };
 
+struct JoinClause {
+    string table_name;
+
+    string left_col;
+    string right_col;
+};
+
 // Represents the entire SELECT query
 struct SelectStatement {
     vector<string> columns; // "*" or ["cell_id", "voltage"]
@@ -41,4 +50,6 @@ struct SelectStatement {
     int limit = -1; // -1 means no limit
     string order_by_column;
     bool order_desc = false; // default to ASC
+    bool is_count_star = false;
+    unique_ptr<JoinClause> join_clause;
 };

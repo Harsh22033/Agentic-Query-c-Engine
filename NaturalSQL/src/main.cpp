@@ -1,7 +1,8 @@
 #include "parser/Lexer.hpp"
 #include "parser/Parser.hpp"
 #include "storage/CSVLoader.hpp"
-#include "engine/Executor.hpp" // <-- 1. Add the Executor include
+#include "storage/Database.hpp"
+#include "engine/Executor.hpp"
 
 #include <bits/stdc++.h>
 
@@ -9,17 +10,23 @@ using namespace std;
 
 int main() {
     cout << "--- NaturalSQL Engine Starting ---\n";
-
+    
     try {
         cout << "\nLoading data...\n";
         
-        // Note: keeping your "data/users.csv" path
+        // Load both tables
         Table users_table = CSVLoader::load("users", "data/users.csv");
+        Table departments_table = CSVLoader::load("departments", "data/departments.csv");
+        
         users_table.print_schema();
         cout << "\n";
 
-        string_view query = "SELECT name, age FROM users WHERE age > 20 LIMIT 5";
-        cout << "Query: " << query << "\n\n";
+        // Create Database
+        Database db;
+        db.emplace("users", std::move(users_table));
+        db.emplace("departments", std::move(departments_table));
+
+        string_view query = "SELECT COUNT(*) FROM users WHERE age > 20";
 
         Lexer lexer(query);
         auto tokens = lexer.tokenize();
@@ -27,16 +34,18 @@ int main() {
 
         Parser parser(tokens);
         auto ast = parser.parse();
-        cout << "Parsing Complete. Executing...\n\n";
+        
+        cout << "Parsing Complete.\n\n";
 
-        // <-- 2. The grand finale: Execute the query!
-        Executor::execute(ast, users_table);
+        // Execute the query
+        Executor executor;
+        executor.execute(ast, db);
 
+        }
+        catch (const exception& e) {
+            cerr << "\nError: " << e.what() << "\n";
+            return 1;
+        }
+
+        return 0;
     }
-    catch (const exception& e) {
-        cerr << "\nError: " << e.what() << "\n";
-        return 1;
-    }
-
-    return 0;
-}
