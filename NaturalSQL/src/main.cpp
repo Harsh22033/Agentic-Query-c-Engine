@@ -26,7 +26,21 @@ int main() {
         db.emplace("users", std::move(users_table));
         db.emplace("departments", std::move(departments_table));
 
-        string_view query = "SELECT COUNT(*) FROM users WHERE age > 20";
+        // Build index on age column
+        db.at("users").build_index("age");
+        cout << "Index built successfully\n";
+
+        // Test index lookup
+        cout << "Testing index lookup for age = 22:\n";
+        auto rows = db.at("users").indexes["age"].find(22);
+        cout << "Rows found: " << rows.size() << "\n";
+        for (auto row : rows) {
+            cout << "Row ID: " << row << "\n";
+        }
+        cout << "\n";
+
+        // Test WHERE query to see current behavior
+        string_view query = "SELECT * FROM users WHERE age = 22";
 
         Lexer lexer(query);
         auto tokens = lexer.tokenize();

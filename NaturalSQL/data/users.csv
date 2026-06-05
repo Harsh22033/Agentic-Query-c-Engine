@@ -1,4 +1,4 @@
-name,age,city
-Harsh,22,Bangalore
-Aman,19,Delhi
-Riya,25,Mumbai
+id,name,age,dept_id
+1,Harsh,22,10
+2,Riya,25,20
+3,Aman,22,10

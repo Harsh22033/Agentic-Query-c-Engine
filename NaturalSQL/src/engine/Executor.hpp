@@ -11,6 +11,12 @@ public:
     static void execute(const unique_ptr<SelectStatement>& ast, const Database& db);
 
 private:
+    // Execute JOIN queries
+    static void execute_join(
+        const unique_ptr<SelectStatement>& ast,
+        const Database& db
+    );
+    
     // Evaluates a generic expression to a concrete value for a specific row
     static SqlValue evaluate_expr(const Expr* expr, const Table& table, size_t row_idx);
     

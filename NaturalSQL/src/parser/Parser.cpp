@@ -76,9 +76,20 @@ unique_ptr<SelectStatement> Parser::parse() {
                     "Expected column name"
                 );
 
-                stmt->columns.push_back(
-                    string(previous().lexeme)
-                );
+                string column = string(previous().lexeme);
+
+                // Handle table.column
+                if (match(TokenType::DOT)) {
+                    consume(
+                        TokenType::IDENTIFIER,
+                        "Expected column after '.'"
+                    );
+
+                    column += ".";
+                    column += string(previous().lexeme);
+                }
+
+                stmt->columns.push_back(column);
             }
 
         } while (match(TokenType::COMMA));
